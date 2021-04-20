@@ -23,8 +23,239 @@ Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang ber
 
 a. Pertama-tama program perlu mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Karena bos Loba teledor, dalam zip tersebut bisa berisi folder-folder yang tidak penting, maka program harus bisa membedakan file dan folder sehingga dapat memproses file yang seharusnya dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
 
+Pertama, kita membuat program utama seperti dibawah ini:
+
+```c
+    int main() {
+        pid_t child_id;
+        int status;
+        char workSpace[] = "/home/anran/modul2/petshop";
+        child_id = fork();
+
+        if (child_id < 0) {
+            exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+        }
+
+        if (child_id == 0) {
+            // this is child
+            unzipping(workSpace);
+        } else {
+            // this is parent
+            while ((wait(&status)) > 0);
+            solution(workSpace);
+        }
+        return 0;
+    }
+```
+
+Untuk menyelesaikan salah satu permasalahan di poin a, kita menggunakan suatu fungsi bernama ``unzipping`` yang berguna untuk membuat direktori seperti yang disuruh pada soal kemudian mengunzip zip yang sudah didownload ke direktori tersebut.
+
+```c
+    void unzipping(char dest[])
+    {
+        pid_t child_id;
+        int status;
+
+        child_id = fork();
+
+        if (child_id < 0) {
+            exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+        }
+
+        if (child_id == 0) {
+            // this is child
+            char *argv[] = {"mkdir", "-p", dest, NULL};
+            execv("/bin/mkdir", argv);
+        } else {
+            // this is parent
+            while ((wait(&status)) > 0);
+            char *argv[] = {"unzip","-q", "/home/anran/kuliah/sisop/modul2/shift2/soal2/pets.zip","-d",dest, NULL};
+            execv("/usr/bin/unzip", argv);
+        }   
+    }
+```
+Untuk permasalahan selanjutnya, yaitu menghapus folder yang tidak diperlukan, kita menggunakan salah satu bagian dari fungsi ``solution`` di bawah ini:
+
+```c
+    void solution(char *source)
+    {
+        DIR *dp;
+        struct dirent *ep;
+        char path[100];
+        strcpy(path,source);
+        dp = opendir(source);
+
+        if (dp != NULL)
+        {
+        while ((ep = readdir (dp))) {
+            if (strcmp(ep->d_name, ".") != 0 && strcmp(ep->d_name, "..") != 0)
+            {
+                    char fullPath[100];
+                    strcpy(fullPath,path);
+                    strcat(fullPath,"/");
+                    strcat(fullPath,ep->d_name);
+                    //puts (fullPath);
+
+                    struct stat fs;
+                    int r;
+                    r = stat(fullPath,&fs);
+                    if( r==-1 )
+                    {
+                        fprintf(stderr,"File error\n");
+                        exit(1);
+                    }
+                    if( S_ISDIR(fs.st_mode) )
+                        //printf("%s is a directory\n",fullPath);
+                        removeFolder(fullPath);
+                    else
+                        makeFolderAndMovePhoto(ep->d_name,source);
+            }
+        }
+
+        (void) closedir (dp);
+        } else perror ("Couldn't open the directory"); 
+    }
+```
+
+Pertama kita melakukan directory listing, kemudian untuk setiap file di dalam direktori petshop, akan dicek apakah file tersebut berupa sebuah folder atau bukan menggunakan salah satu fungsi di library stat yaitu ``S_ISDIR(file.st_mode)``. Jika file yang dicek merupakan sebuah direktori, maka direktori tersebut akan dihapus, tetapi jika bukan, file foto akan dilanjutkan untuk diproses sesuai dengan perintah di poin-poin setelah ini. 
+
 b. Foto peliharaan perlu dikategorikan sesuai jenis peliharaan, maka kamu harus membuat folder untuk setiap jenis peliharaan yang ada dalam zip. Karena kamu tidak mungkin memeriksa satu-persatu, maka program harus membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip.
 Contoh: Jenis peliharaan kucing akan disimpan dalam “/petshop/cat”, jenis peliharaan kura-kura akan disimpan dalam “/petshop/turtle”.
+
+Untuk poin b sampai selanjutnya, kita menggunakan fungsi ``makeFolderAndMovePhoto`` di bawah ini:
+
+```c
+    void makeFolderAndMovePhoto(char *name, char *source)
+    {
+        const char *p="_",*q=";";
+        char *a,*b,*c,*d;
+        char realName[100];
+        strcpy(realName,name);
+
+        removeSubstr(name, ".jpg");
+        for( a=strtok_r(name,p,&c) ; a!=NULL ; a=strtok_r(NULL,p,&c) ) {
+            int index = 0;
+            char type[20];
+            char name[20];
+            char age[20];
+            for( b=strtok_r(a,q,&d) ; b!=NULL ; b=strtok_r(NULL,q,&d) )
+            {
+                if(index == 0) strcpy(type,b);
+                else if(index == 1) strcpy(name,b);
+                else if (index == 2) strcpy(age,b);
+                index++;
+            }
+            makeFolder_util(source,type);
+            copyPhoto(source,realName,type,name,age);
+        }
+
+        deletePhoto(source,realName);
+    }
+```
+
+Fungsi di atas pertama-tama menerima argumen berupa nama file yang akan di proses serta path ke folder petshop. Kemudian kita menghapus ".jpg" yang terdapat pada nama file menggunakan fungsi ``removeSubstr`` di bawah ini:
+
+```c
+    void removeSubstr (char *string, char *sub) {
+        char *match;
+        int len = strlen(sub);
+        while ((match = strstr(string, sub))) {
+            *match = '\0';
+            strcat(string, match+len);
+        }
+    }
+```
+
+Karena pada setiap foto mungkin saja terdapat lebih dari 1 binatang, maka pertama kita harus membagi string nama file berdasarkan karakter "_" yang digunakan untuk memisahkan setiap hewan mengunakan looping ini:
+
+```c
+    for( a=strtok_r(name,p,&c) ; a!=NULL ; a=strtok_r(NULL,p,&c) )
+    {
+        ...
+        ...
+    }
+```
+
+Kemudian untuk setiap data satu peliharaan yang ada, kita membagi string tersebut berdasarkan karakter ";" dan menyimpannya dalam string ``type``, ``name``, serta ``age`` seperti di bawah ini:
+
+```c
+        int index = 0;
+        char type[20];
+        char name[20];
+        char age[20];
+        for( b=strtok_r(a,q,&d) ; b!=NULL ; b=strtok_r(NULL,q,&d) )
+        {
+            if(index == 0) strcpy(type,b);
+            else if(index == 1) strcpy(name,b);
+            else if (index == 2) strcpy(age,b);
+            index++;
+        }
+```
+
+Setelah mendapatkan jenis hewan di foto tersebut yang disimpan dalam ``type``, maka kita dapat membuat folder berdasarkan jenis hewan tersebut menggunakan fungsi ``makeFolder_util`` di bawah ini:
+
+```c
+    void makeFolder_util(char *source,char *name)
+    {
+        char path[100];
+        strcpy(path,source);
+        strcat(path,"/");
+        strcat(path,name);
+
+        pid_t child_id;
+        int status;
+
+        child_id = fork();
+
+        if (child_id < 0) {
+            exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+        }
+
+        if (child_id == 0) {
+            // this is child
+
+            char *argv[] = {"mkdir", "-p", path, NULL};
+            execv("/bin/mkdir", argv);
+        } else {
+            // this is parent
+            while ((wait(&status)) > 0);
+            makeKeterangan(path);
+            return;
+        }
+    }    
+```
+
+Karena pada poin e kita disuruh membuat sebuah file ``keterangan.txt`` yang berisi nama dan umur semua peliharaan dalam folder ini, maka setelah membuat folder ini, kita membuat juga file tersebut menggunakan fungsi ``makeKeterangan`` di bawah ini:
+
+```c
+    void makeKeterangan(char *path)
+    {
+        char dest[100];
+        strcpy(dest,path);
+        strcat(dest,"/");
+        strcat(dest,"keterangan.txt");
+
+        pid_t child_id;
+        int status;
+
+        child_id = fork();
+
+        if (child_id < 0) {
+            exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+        }
+
+        if (child_id == 0) {
+            // this is child
+
+            char *argv[] = {"touch", dest, NULL};
+            execv("/bin/touch", argv);
+        } else {
+            // this is parent
+            while ((wait(&status)) > 0);
+            return;
+        }    
+    }
+```
 
 c. Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
 Contoh: “/petshop/cat/joni.jpg”. 
@@ -32,6 +263,112 @@ Contoh: “/petshop/cat/joni.jpg”.
 d. Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg”.
 
 e. Di setiap folder buatlah sebuah file "keterangan.txt" yang berisi nama dan umur semua peliharaan dalam folder tersebut.
+
+Untuk poin c, d, dan e, setelah membuat folder pada poin b, maka foto tersebut akan dicopy ke folder yang sesuai dengan ``type`` dan direname dengan ``name`` menggunakan fungsi ``copyPhoto`` di bawah ini:
+
+```c
+    void copyPhoto(char *source,char *realName,char *type,char *name,char *age)
+    {
+        char start[100];
+        char dest[100];
+        char keterangan[100];
+
+        strcpy(start,source);
+        strcat(start,"/");
+        strcat(start,realName);
+
+        strcpy(dest,source);
+        strcat(dest,"/");
+        strcat(dest,type);
+        strcat(dest,"/");
+        strcat(dest,name);
+        strcat(dest,".jpg");
+
+        strcpy(keterangan,source);
+        strcat(keterangan,"/");
+        strcat(keterangan,type);
+        strcat(keterangan,"/");
+        strcat(keterangan,"keterangan.txt");
+
+        pid_t child_id;
+        int status;
+
+        child_id = fork();
+
+        if (child_id < 0) {
+        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+        }
+
+        if (child_id == 0) {
+        // this is child
+            char *argv[] = {"cp", start,dest, NULL};
+            execv("/bin/cp", argv);
+        } else {
+        // this is parent
+        while ((wait(&status)) > 0);
+            addKeterangan(keterangan,name,age);
+            return;
+        }
+    }
+```
+
+Setelah dicopy ke folder yang sesuai, kemudian kita menambahkan detail hewan yang baru saja ditambahkan ke ``keterangan.txt`` pada folder tersebut menggunakan fungsi ``addKeterangan`` :
+```c
+    void addKeterangan(char *keterangan,char *name,char *age)
+    {
+        char text[100];
+        sprintf(text,"nama : %s\numur : %s\n\n",name,age);
+
+        FILE *fPtr;
+        fPtr = fopen(keterangan, "a");
+
+        if (fPtr == NULL)
+        {
+            /* Unable to open file hence exit */
+            printf("\nUnable to open '%s' file.\n", keterangan);
+            printf("Please check whether file exists and you have write privilege.\n");
+            exit(EXIT_FAILURE);
+        }
+
+        fputs(text, fPtr);
+        fclose(fPtr);
+
+        return;
+
+    }   
+```
+
+Setelah sebuah foto selesai diproses, maka kita perlu menghapus foto asli yang masih berada di direktori petshop menggunakan fungsi ``deletePhoto`` :
+
+```c
+    void deletePhoto(char *source,char *realName)
+    {
+        char target[100];
+        strcpy(target,source);
+        strcat(target,"/");
+        strcat(target,realName);
+
+        pid_t child_id;
+        int status;
+
+        child_id = fork();
+
+        if (child_id < 0) {
+        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+        }
+
+        if (child_id == 0) {
+        // this is child
+            char *argv[] = {"rm", target, NULL};
+            execv("/bin/rm", argv);
+        } else {
+        // this is parent
+        while ((wait(&status)) > 0);
+            return;
+        }
+    }
+```
+
 
 
 ## No 3
