@@ -24,8 +24,8 @@
 	* [3.4 (d)](#34)
 	* [3.5 (e)](#35)
 	* [Gambar](#hasil-untuk-no-3)
-		* [Memakai -z](#menggunakan-z)
-		* [Memakai -x](#menggunakan-x)
+		* [Memakai -z](#menggunakan--z)
+		* [Memakai -x](#menggunakan--x)
 
 
 
