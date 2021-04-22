@@ -2,7 +2,8 @@
 
 ## Daftar Isi
 
--[No 1](#no-1)
+* [No 1](#no-1)
+	* [a] (#a) 	
 
 ## No 1
 Pada suatu masa, hiduplah seorang Steven yang hidupnya pas-pasan. Steven punya pacar, namun sudah putus sebelum pacaran. Ketika dia galau memikirkan mantan, ia selalu menonton https://www.youtube.com/watch?v=568DH_9CMKI untuk menghilangkan kesedihannya.
@@ -32,7 +33,8 @@ char depan[] = "https://drive.google.com/uc?id=";
 char belakang[] = "&export=download";
 ```
 
-(a) Dikarenakan Stevany sangat menyukai huruf Y, Steven ingin nama folder-foldernya adalah Musyik untuk mp3, Fylm untuk mp4, dan Pyoto untuk jpg 
+### (a) 
+Dikarenakan Stevany sangat menyukai huruf Y, Steven ingin nama folder-foldernya adalah Musyik untuk mp3, Fylm untuk mp4, dan Pyoto untuk jpg 
 
 Pertama, kita membuat program utama seperti dibawah ini :
 ```c
