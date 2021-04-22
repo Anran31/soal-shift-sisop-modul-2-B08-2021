@@ -3,7 +3,26 @@
 ## Daftar Isi
 
 * [No 1](#no-1)
-	* [a] (#a) 	
+	* [a](#a)
+	* [b & c](#b-&-c) 
+	* [d](#d)
+	* [e](#e)
+	
+* [No 2](#no-2)
+	* [a](#a)
+	* [b](#b)
+	* [c](#c)
+	* [d](#d)
+	* [e](#e)
+
+* [No 3](#no-3)
+	* [a](#a)
+	* [b](#b)
+	* [c](#c)
+	* [d](#d)
+	* [e](#e)
+
+
 
 ## No 1
 Pada suatu masa, hiduplah seorang Steven yang hidupnya pas-pasan. Steven punya pacar, namun sudah putus sebelum pacaran. Ketika dia galau memikirkan mantan, ia selalu menonton https://www.youtube.com/watch?v=568DH_9CMKI untuk menghilangkan kesedihannya.
@@ -87,8 +106,8 @@ void make_dir() {
 }
 ```
 
-(b) untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :). 
-(c) Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu meng-extract-nya setelah didownload serta 
+### (b) & (c) 
+Untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :). Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu meng-extract-nya setelah didownload serta 
 
 Untuk menyelesaikan permasalahan poin (b) serta (c), dibutuhkan fungsi ``unduh_extract`` serta ``util_unduh_and_extract``
 ```c
@@ -133,7 +152,8 @@ void util_unduh_and_extract(int i) {
 Menggunakan ``unizp`` untuk mem-unzip file serta ``"wget", "-q", "--no-check-certificate"`` untuk mengunduh file yang diinginkan. serta menggunakan ``wait`` agar dapat mengecek apakah file sudah di download apa belum , jika belum maka dia tidak akan mengaktifkan bagian unzip dalam fungsi.
 
 
-(d) memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan).
+### (d) 
+Memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan).
 
 Untuk soal poin (d) akan menggunakan fungsi ``move_files`` serta ``util_move_files``
 ```c
@@ -196,7 +216,8 @@ if (child_id == 0) {
                 }
 ```
 
-(e) Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
+### (e) 
+Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
 
 Untuk soal poin (e) ini, maka akan menggunakan fungsi bernama ``programjam16``
 ```c
@@ -207,7 +228,8 @@ void programjam16 () {
 }
 ```
 
-(f) Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
+### (f) 
+Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
 
 Untuk soal poin terakhir ini, akan menggunakan fungsi bernama ``programjam22``, ``archive``, dan ``removee``
 
@@ -259,7 +281,8 @@ void programjam22() {
 ## No 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
 
-a. Pertama-tama program perlu mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Karena bos Loba teledor, dalam zip tersebut bisa berisi folder-folder yang tidak penting, maka program harus bisa membedakan file dan folder sehingga dapat memproses file yang seharusnya dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
+### (a) 
+Pertama-tama program perlu mengextract zip yang diberikan ke dalam folder “/home/[user]/modul2/petshop”. Karena bos Loba teledor, dalam zip tersebut bisa berisi folder-folder yang tidak penting, maka program harus bisa membedakan file dan folder sehingga dapat memproses file yang seharusnya dikerjakan dan menghapus folder-folder yang tidak dibutuhkan.
 
 Pertama, kita membuat program utama seperti dibawah ini:
 
@@ -357,7 +380,8 @@ Untuk permasalahan selanjutnya, yaitu menghapus folder yang tidak diperlukan, ki
 
 Pertama kita melakukan directory listing, kemudian untuk setiap file di dalam direktori petshop, akan dicek apakah file tersebut berupa sebuah folder atau bukan menggunakan salah satu fungsi di library stat yaitu ``S_ISDIR(file.st_mode)``. Jika file yang dicek merupakan sebuah direktori, maka direktori tersebut akan dihapus, tetapi jika bukan, file foto akan dilanjutkan untuk diproses sesuai dengan perintah di poin-poin setelah ini. 
 
-b. Foto peliharaan perlu dikategorikan sesuai jenis peliharaan, maka kamu harus membuat folder untuk setiap jenis peliharaan yang ada dalam zip. Karena kamu tidak mungkin memeriksa satu-persatu, maka program harus membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip.
+### (b) 
+Foto peliharaan perlu dikategorikan sesuai jenis peliharaan, maka kamu harus membuat folder untuk setiap jenis peliharaan yang ada dalam zip. Karena kamu tidak mungkin memeriksa satu-persatu, maka program harus membuatkan folder-folder yang dibutuhkan sesuai dengan isi zip.
 Contoh: Jenis peliharaan kucing akan disimpan dalam “/petshop/cat”, jenis peliharaan kura-kura akan disimpan dalam “/petshop/turtle”.
 
 Untuk poin b sampai selanjutnya, kita menggunakan fungsi ``makeFolderAndMovePhoto`` di bawah ini:
@@ -495,12 +519,15 @@ Karena pada poin e kita disuruh membuat sebuah file ``keterangan.txt`` yang beri
     }
 ```
 
-c. Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
+### (c) 
+Setelah folder kategori berhasil dibuat, programmu akan memindahkan foto ke folder dengan kategori yang sesuai dan di rename dengan nama peliharaan.
 Contoh: “/petshop/cat/joni.jpg”. 
 
-d. Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg”.
+### (d) 
+Karena dalam satu foto bisa terdapat lebih dari satu peliharaan maka foto harus di pindah ke masing-masing kategori yang sesuai. Contoh: foto dengan nama “dog;baro;1_cat;joni;2.jpg” dipindah ke folder “/petshop/cat/joni.jpg” dan “/petshop/dog/baro.jpg”.
 
-e. Di setiap folder buatlah sebuah file "keterangan.txt" yang berisi nama dan umur semua peliharaan dalam folder tersebut.
+### (e) 
+Di setiap folder buatlah sebuah file "keterangan.txt" yang berisi nama dan umur semua peliharaan dalam folder tersebut.
 
 Untuk poin c, d, dan e, setelah membuat folder pada poin b, maka foto tersebut akan dicopy ke folder yang sesuai dengan ``type`` dan direname dengan ``name`` menggunakan fungsi ``copyPhoto`` di bawah ini:
 
@@ -612,7 +639,8 @@ Setelah sebuah foto selesai diproses, maka kita perlu menghapus foto asli yang m
 ## No 3
 Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang di perusahan ternama yang bernama “FakeKos Corp.”, perusahaan yang bergerak dibidang keamanan data. Karena Ranora masih magang, maka beban tugasnya tidak sebesar beban tugas pekerja tetap perusahaan. Di hari pertama Ranora bekerja, pembimbing magang Ranora memberi tugas pertamanya untuk membuat sebuah program.
 
-a. Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
+### (a) 
+Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
 
 Pertama tama adalah menulis ``main`` dari program 
 ```c
@@ -747,7 +775,8 @@ void makeDir(char *timeStamp)
 ``fork`` ditulis sebanyak 3 kali karena setiap 40 detik program akan berjalan, yang pertama berjalan adalah ``mkdir`` lalu kemudian menuju ke ``wait`` untuk menuju ke fungsi ``downloadPics``
 
 
-b. Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
+### (b) 
+Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
 
 Pada soal poin (b), menggunakan fungsi ``downloadPics``
 ```c
@@ -862,7 +891,8 @@ Yang pertama, adalah loop for sebanyak 10 kali
 Didalam ``for``, memakai ``strftime`` untuk ke tempat yang sama. Lalu untuk sizenya, menggunakan ``t%1000+50`` karena ``t`` itu sendiri sudah berbentuk Epoch Unix, dan tinggal di masukkan atau ditempel pada source yang sudah dituliskan. Setelah itu, mendownload file menggunakan ``char *arg0[] = {"wget","-bq",source, "-O", loc, NULL};``. Untuk ``time`` sendiri adalah timer yang digunakan jika ``diff`` telah mencapai 5, maka akan mengulang download untuk file selanjutnya, jika tidak, maka akan menjalankan ``sleep``. 
 
 
-c. Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat sebuah file “status.txt”, dimana didalamnya berisi pesan “Download Success” yang terenkripsi dengan teknik Caesar Cipher dan dengan shift 5. Caesar Cipher adalah Teknik enkripsi sederhana yang dimana dapat melakukan enkripsi string sesuai dengan shift/key yang kita tentukan. Misal huruf “A” akan dienkripsi dengan shift 4 maka akan menjadi “E”. Karena Ranora orangnya perfeksionis dan rapi, dia ingin setelah file tersebut dibuat, direktori akan di zip dan direktori akan didelete, sehingga menyisakan hanya file zip saja.
+### (c) 
+Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat sebuah file “status.txt”, dimana didalamnya berisi pesan “Download Success” yang terenkripsi dengan teknik Caesar Cipher dan dengan shift 5. Caesar Cipher adalah Teknik enkripsi sederhana yang dimana dapat melakukan enkripsi string sesuai dengan shift/key yang kita tentukan. Misal huruf “A” akan dienkripsi dengan shift 4 maka akan menjadi “E”. Karena Ranora orangnya perfeksionis dan rapi, dia ingin setelah file tersebut dibuat, direktori akan di zip dan direktori akan didelete, sehingga menyisakan hanya file zip saja.
 
 Di poin ini, menggunakan sebagian fungsi ``downloadPics`` dan ``addSuccess``.
 ```c
@@ -958,7 +988,8 @@ char *arg[] = {"zip",timeStamp,"-qrm",timeStamp,NULL};
 Pada fungsi ``downloadPics``.
 
 
-d. Untuk mempermudah pengendalian program, pembimbing magang Ranora ingin program tersebut akan men-generate sebuah program “Killer” yang executable, dimana program tersebut akan menterminasi semua proses program yang sedang berjalan dan akan menghapus dirinya sendiri setelah program dijalankan. Karena Ranora menyukai sesuatu hal yang baru, maka Ranora memiliki ide untuk program “Killer” yang dibuat nantinya harus merupakan program bash.
+### (d) 
+Untuk mempermudah pengendalian program, pembimbing magang Ranora ingin program tersebut akan men-generate sebuah program “Killer” yang executable, dimana program tersebut akan menterminasi semua proses program yang sedang berjalan dan akan menghapus dirinya sendiri setelah program dijalankan. Karena Ranora menyukai sesuatu hal yang baru, maka Ranora memiliki ide untuk program “Killer” yang dibuat nantinya harus merupakan program bash.
 
 Poin (d) menggunakan sebagian fungsi di ``main`` sebagai execute nya dan fungsi ``generateKiller`` sendiri. Untuk fungsi di``main`` dibutuhkan untuk mengetahui id dari parent prosesnya agar dapat di-kill serta argumen valuenya.
 ```c
