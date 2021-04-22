@@ -1,7 +1,8 @@
 # soal-shift-sisop-modul-2-B08-2021
 
-##Daftar Isi
--[Soal no 1] (# No 1)
+## Daftar Isi
+
+-[No 1](#no-1)
 
 ## No 1
 Pada suatu masa, hiduplah seorang Steven yang hidupnya pas-pasan. Steven punya pacar, namun sudah putus sebelum pacaran. Ketika dia galau memikirkan mantan, ia selalu menonton https://www.youtube.com/watch?v=568DH_9CMKI untuk menghilangkan kesedihannya.
