@@ -4,19 +4,246 @@
 Pada suatu masa, hiduplah seorang Steven yang hidupnya pas-pasan. Steven punya pacar, namun sudah putus sebelum pacaran. Ketika dia galau memikirkan mantan, ia selalu menonton https://www.youtube.com/watch?v=568DH_9CMKI untuk menghilangkan kesedihannya.
 Pada hari ulang tahun Stevany, Steven ingin memberikan Stevany zip berisikan hal-hal yang disukai Stevany. Steven ingin isi zipnya menjadi rapi dengan membuat folder masing-masing sesuai extensi. 
 
+Pertama tama adalah mendeklarasikan nama nama folder yang akan digunakan beserta id download dan link yang dibutuhkan
+
+```c
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <syslog.h>
+#include <string.h>
+#include <wait.h>
+#include <time.h>
+#include <dirent.h>
+
+char *dir_name[] = {"Musyik", "Fylm", "Pyoto"};
+char *download_file_name[] = {"Musik_for_Stefany.zip", "Film_for_Stefany.zip", "Foto_for_Stefany.zip"};
+char *download_id[] = {"1ZG8nRBRPquhYXq_sISdsVcXx5VdEgi-J", "1ktjGgDkL0nNpY-vT7rT7O6ZI47Ke9xcp", "1FsrAzb9B5ixooGUs0dGiBr-rC7TS9wTD"};
+char *downloaded_dir_name[] = {"MUSIK", "FILM", "FOTO"};
+char depan[] = "https://drive.google.com/uc?id=";
+char belakang[] = "&export=download";
+```
+
 (a) Dikarenakan Stevany sangat menyukai huruf Y, Steven ingin nama folder-foldernya adalah Musyik untuk mp3, Fylm untuk mp4, dan Pyoto untuk jpg 
 
-(b) untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :). 
+Pertama, kita membuat program utama seperti dibawah ini :
+```c
+int main () {
+    pid_t pid, sid;
+    pid = fork();
 
+    if (pid < 0)
+        exit(EXIT_FAILURE);
+    if (pid > 0)
+        exit(EXIT_SUCCESS);
+    
+    umask(0);
+    sid = setsid();
+
+    if (sid < 0)
+        exit(EXIT_FAILURE);
+    if ((chdir("/home/fauzan/sisop/shift2/soal1")) < 0)
+        exit(EXIT_FAILURE);
+    
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+
+    while (1) {
+        time_t now = time(NULL);
+        struct tm *full = localtime (&now);
+        if (full->tm_mday == 9 && full->tm_mon == 3 && full->tm_hour == 16 && full->tm_min == 22 && full->tm_sec == 0)
+            programjam16();
+        else if (full->tm_mday == 9 && full->tm_mon == 3 && full->tm_hour == 22 && full->tm_min == 22 && full->tm_sec == 0)
+            programjam22();
+    }
+    // programjam16();
+    // programjam22();
+}
+```
+Dengan memakai ``time`` serta ``struct`` dan agar dapat mengambil bagian bagian yang dibutuhkan.
+Sedang untuk membuat folder itu sendiri menggunakan fungsi dari ``mkdir``
+```c
+void make_dir() {
+    pid_t child_id;
+    child_id = fork();
+
+    if (child_id < 0)
+        exit(EXIT_FAILURE);
+    if (child_id == 0) {
+        char *argv[] = {"mkdir", dir_name[0], dir_name[1], dir_name[2], NULL};
+        execv("/bin/mkdir", argv);
+    }
+}
+```
+
+(b) untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :). 
 (c) Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu meng-extract-nya setelah didownload serta 
 
-(d) memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan).
+Untuk menyelesaikan permasalahan poin (b) serta (c), dibutuhkan fungsi ``unduh_extract`` serta ``util_unduh_and_extract``
+```c
+void unduh_extract() {
+    int i;
+    for (i=0;i<3;i++) {
+        pid_t child_id;
+        child_id = fork();
+        int status;
 
-(e) Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany). 
+        if (child_id < 0)
+            exit(EXIT_FAILURE);
+        if (child_id == 0) 
+            util_unduh_and_extract(i);
+        while(wait(&status) > 0);
+    }
+}
+```
+Disini menggunakan ``for`` sebanyak 3 karena file yang perlu di download ada di 3 folder terpisah. sedangkan penggunaan ``child_id`` adalah agar program utamanya tidak di-Terminate ketika ke fungsi ``util_unduh_and_extract`` yang menggunakan ``execv`` tidak serta merta mati dan tidak berjalan kembali.
+```c
+void util_unduh_and_extract(int i) {
+    char string[100];
+    sprintf (string, "%s%s%s", depan, download_id[i], belakang);
+    pid_t child_id;
+    child_id = fork();
+    int status_download;
+
+    if (child_id < 0)
+        exit(EXIT_FAILURE);
+    if (child_id == 0) {
+        char *argv[] = {"wget", "-q", "--no-check-certificate", string, "-O", download_file_name[i], NULL};
+        execv("/bin/wget", argv);
+    }
+    else {
+        while (wait(&status_download) > 0);
+        // sleep(10);
+        char *argv[] = {"unizp", "-qq", download_file_name[i], NULL};
+        execv("/bin/unzip", argv);
+    }
+}
+```
+Menggunakan ``unizp`` untuk mem-unzip file serta ``"wget", "-q", "--no-check-certificate"`` untuk mengunduh file yang diinginkan. serta menggunakan ``wait`` agar dapat mengecek apakah file sudah di download apa belum , jika belum maka dia tidak akan mengaktifkan bagian unzip dalam fungsi.
+
+(d) memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan).
+Untuk soal poin (d) akan menggunakan fungsi ``move_files`` serta ``util_move_files``
+```c
+void move_files() {
+    int i;
+    for (i=0;i<3;i++)
+        util_move_files(i);
+}
+```
+Prinsip dari fungsi ``move_files`` sama dengan fungsi ``unduh_extract`` sebelumnya, yaitu menggunakan ``for`` untuk ketiga folder yang di butuhkan. hanya saja dia tidak menggunakan ``child_id`` dikarenakan sudah diaplikasikan di dalam fungsi ``util_move_files``
+
+```c
+void util_move_files(int i) {
+    DIR *dp;
+    struct dirent *files;
+    // printf ("Mlebu kene\n");
+    dp = opendir(downloaded_dir_name[i]);
+
+    if (dp != NULL) {
+        while ((files = readdir(dp))) {
+            if (strcmp(files->d_name, ".") != 0 && strcmp(files->d_name, "..") != 0) {
+                char filePath[500];
+                sprintf (filePath, "%s%s%s", downloaded_dir_name[i], "/", files->d_name);
+                // printf ("%s\n", filePath);
+                pid_t child_id;
+                child_id = fork();
+                int status;
+                if (child_id < 0)
+                    exit (EXIT_FAILURE);
+                if (child_id == 0) {
+                    char *argv[] = {"mv", filePath, dir_name[i], NULL};
+                    execv ("/bin/mv", argv);
+                }
+                while(wait(&status) > 0);
+            }
+        }
+        (void) closedir (dp);
+    }
+    else perror ("Couldn't open the directory");
+    return;
+}
+```
+Pada fungsi ``util_move_files`` menggunakan sistem ``Directory Listing``. Pertama tama yang dilakukan adalah mengambil directory yang dibutuhkan menggunakan
+```c
+dp = opendir(downloaded_dir_name[i]);
+...
+```
+satu persatu, lalu kemudian membaca isi directorynya sampai habis menggunakan
+```c
+while ((files = readdir(dp))) 
+{
+    ...
+}
+```
+Kemudian memindahkannya satu persatu dengan ``execv``
+```c
+if (child_id == 0) {
+                    char *argv[] = {"mv", filePath, dir_name[i], NULL};
+                    execv ("/bin/mv", argv);
+                }
+```
+(e) Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
+Untuk soal poin (e) ini, maka akan menggunakan fungsi bernama ``programjam16``
+```c
+void programjam16 () {
+    make_dir();
+    unduh_extract();
+    move_files();
+}
+```
 
 (f) Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
+Untuk soal poin terakhir ini, akan menggunakan fungsi bernama ``programjam22``, ``archive``, dan ``removee``
 
-Kemudian Steven meminta bantuanmu yang memang sudah jago sisop untuk membantunya mendapatkan hati Stevany.
+Dalam fungsi ``archive`` akan melakukan ``zip`` pada folder folder yang dibutuhkan.
+```c
+void archive() {
+    pid_t child_id;
+    child_id = fork();
+    int status;
+
+    if (child_id < 0)
+        exit(EXIT_FAILURE);
+    if (child_id == 0) {
+        char *argv[] = {"zip", "-qqr", "Lopyu_Stefany.zip", dir_name[0], dir_name[1], dir_name[2], NULL};
+        execv("/bin/zip", argv);
+    }
+    while(wait(&status) > 0);
+}
+```
+Sedangkan pada fungsi ``removee``sendiri berfungsi untuk menghapus directory directory yang ada dan hanya akan menyisakan folder denagn format .zip saja.
+```c
+void removee() {
+    pid_t child_id;
+    child_id = fork();
+    int status;
+
+    if (child_id < 0)
+        exit(EXIT_FAILURE);
+    if (child_id == 0) {
+        char *argv[] = {"rm", "-r", dir_name[0], dir_name[1], dir_name[2], 
+                        downloaded_dir_name[0], downloaded_dir_name[1], downloaded_dir_name[2], NULL};
+        execv("/bin/rm", argv);
+    }
+    while(wait(&status) > 0);
+}
+```
+Pada fungsi ini, menggunakan ``rm`` sebagai command penghapus directory.
+
+Dan kedua fungsi diatas ini, dimasukkan kedalam fungsi ``programjam22`` agar kedua fungsi itu berjalan pada waktu yang ditentukan.
+```c
+void programjam22() {
+    archive();
+    removee();
+}
+```
+
+
 
 ## No 2
 Loba bekerja di sebuah petshop terkenal, suatu saat dia mendapatkan zip yang berisi banyak sekali foto peliharaan dan Ia diperintahkan untuk mengkategorikan foto-foto peliharaan tersebut. Loba merasa kesusahan melakukan pekerjaanya secara manual, apalagi ada kemungkinan ia akan diperintahkan untuk melakukan hal yang sama. Kamu adalah teman baik Loba dan Ia meminta bantuanmu untuk membantu pekerjaannya.
