@@ -15,6 +15,7 @@
 	* [2.3 (c)](#23)
 	* [2.4 (d)](#24)
 	* [2.5 (e)](#25)
+	* [Gambar](#hasil-untuk-no-2)
 
 * [No 3](#no-3)
 	* [3.1 (a)](#31)
@@ -22,6 +23,9 @@
 	* [3.3 (c)](#33)
 	* [3.4 (d)](#34)
 	* [3.5 (e)](#35)
+	* [Gambar](#hasil-untuk-no-3)
+		* [Memakai -z](#menggunakan-z)
+		* [Memakai -x](#menggunakan-x)
 
 
 
@@ -107,6 +111,11 @@ void make_dir() {
 }
 ```
 
+**Hasil untuk 1.1**
+
+![11 directory](https://user-images.githubusercontent.com/76694068/115735072-62aedd80-a3b4-11eb-960c-751cd5474655.jpg)
+
+
 ### 1.2
 b & c. Untuk musik Steven mendownloadnya dari link di bawah, film dari link di bawah lagi, dan foto dari link dibawah juga :). Steven tidak ingin isi folder yang dibuatnya berisikan zip, sehingga perlu meng-extract-nya setelah didownload serta 
 
@@ -151,6 +160,10 @@ void util_unduh_and_extract(int i) {
 }
 ```
 Menggunakan ``unizp`` untuk mem-unzip file serta ``"wget", "-q", "--no-check-certificate"`` untuk mengunduh file yang diinginkan. serta menggunakan ``wait`` agar dapat mengecek apakah file sudah di download apa belum , jika belum maka dia tidak akan mengaktifkan bagian unzip dalam fungsi.
+
+**Hasil untuk 1.2**
+
+![12 bc](https://user-images.githubusercontent.com/76694068/115735064-60e51a00-a3b4-11eb-9fa0-4fc86c0ff761.jpg)
 
 
 ### 1.3 
@@ -216,6 +229,10 @@ if (child_id == 0) {
                     execv ("/bin/mv", argv);
                 }
 ```
+**Hasil untuk 1.3**
+
+![13 d](https://user-images.githubusercontent.com/76694068/115735059-5f1b5680-a3b4-11eb-9fdc-d82bb55bc2e6.jpg)
+
 
 ### 1.4 
 e. Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
@@ -276,6 +293,10 @@ void programjam22() {
     removee();
 }
 ```
+**Maka hasil untuk 1.5**
+
+![14 e](https://user-images.githubusercontent.com/76694068/115735049-5dea2980-a3b4-11eb-95e3-97f34480c3a8.jpg)
+
 
 
 
@@ -634,6 +655,13 @@ Setelah sebuah foto selesai diproses, maka kita perlu menghapus foto asli yang m
         }
     }
 ```
+### Hasil Untuk No 2
+
+![21](https://user-images.githubusercontent.com/76694068/115735042-5cb8fc80-a3b4-11eb-960c-f97e001a663c.png)
+
+![22](https://user-images.githubusercontent.com/76694068/115735034-5aef3900-a3b4-11eb-9b1b-aa213245cffe.png)
+
+![23](https://user-images.githubusercontent.com/76694068/115735027-59be0c00-a3b4-11eb-8fa6-fdbe01a77239.png)
 
 
 
@@ -978,3 +1006,27 @@ if(!strcmp(argv[1],"-z") || !strcmp(argv[1],"-x"))
 ```
 
 Digunakan dan ditaruh sebelum command yang lain, jadi semua proses pada fungsi lain akan melewati argumen ini terlebih dahulu.
+
+### Hasil Untuk no 3
+#### Menggunakan -z
+
+![31 -z](https://user-images.githubusercontent.com/76694068/115734997-54f95800-a3b4-11eb-9c08-4926cff14a5c.png)
+
+![32 -z](https://user-images.githubusercontent.com/76694068/115735011-562a8500-a3b4-11eb-99cc-39443931229d.png)
+
+![33 -z](https://user-images.githubusercontent.com/76694068/115735018-575bb200-a3b4-11eb-818c-b594372fa9ed.png)
+
+![34 -z](https://user-images.githubusercontent.com/76694068/115735023-588cdf00-a3b4-11eb-8fc4-8c94e86b3047.png)
+
+
+#### Menggunakan -x
+
+![31 -x](https://user-images.githubusercontent.com/76694068/115734958-4dd24a00-a3b4-11eb-83b0-460702f1ef3d.png)
+
+![32 -x](https://user-images.githubusercontent.com/76694068/115734974-5034a400-a3b4-11eb-9f4d-e2cf0d85c233.png)
+
+![33 -x](https://user-images.githubusercontent.com/76694068/115734980-5165d100-a3b4-11eb-910d-f1a59980918e.png)
+
+![34 -x](https://user-images.githubusercontent.com/76694068/115734984-5296fe00-a3b4-11eb-8bc2-41c3bae76b42.png)
+
+![35 -x](https://user-images.githubusercontent.com/76694068/115734992-53c82b00-a3b4-11eb-91f0-bfcd679d3123.png)
