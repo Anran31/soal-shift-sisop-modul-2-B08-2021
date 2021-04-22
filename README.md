@@ -126,7 +126,9 @@ void util_unduh_and_extract(int i) {
 ```
 Menggunakan ``unizp`` untuk mem-unzip file serta ``"wget", "-q", "--no-check-certificate"`` untuk mengunduh file yang diinginkan. serta menggunakan ``wait`` agar dapat mengecek apakah file sudah di download apa belum , jika belum maka dia tidak akan mengaktifkan bagian unzip dalam fungsi.
 
+
 (d) memindahkannya ke dalam folder yang telah dibuat (hanya file yang dimasukkan).
+
 Untuk soal poin (d) akan menggunakan fungsi ``move_files`` serta ``util_move_files``
 ```c
 void move_files() {
@@ -168,12 +170,12 @@ void util_move_files(int i) {
     return;
 }
 ```
-Pada fungsi ``util_move_files`` menggunakan sistem ``Directory Listing``. Pertama tama yang dilakukan adalah mengambil directory yang dibutuhkan menggunakan
+Pada fungsi ``util_move_files`` menggunakan sistem ``Directory Listing``. Pertama tama yang dilakukan adalah mengambil directory satu persatu yang dibutuhkan, menggunakan
 ```c
 dp = opendir(downloaded_dir_name[i]);
 ...
 ```
-satu persatu, lalu kemudian membaca isi directorynya sampai habis menggunakan
+Lalu kemudian membaca isi directorynya sampai habis menggunakan
 ```c
 while ((files = readdir(dp))) 
 {
@@ -187,7 +189,9 @@ if (child_id == 0) {
                     execv ("/bin/mv", argv);
                 }
 ```
+
 (e) Untuk memudahkan Steven, ia ingin semua hal di atas berjalan otomatis 6 jam sebelum waktu ulang tahun Stevany).
+
 Untuk soal poin (e) ini, maka akan menggunakan fungsi bernama ``programjam16``
 ```c
 void programjam16 () {
@@ -198,6 +202,7 @@ void programjam16 () {
 ```
 
 (f) Setelah itu pada waktu ulang tahunnya Stevany, semua folder akan di zip dengan nama Lopyu_Stevany.zip dan semua folder akan di delete(sehingga hanya menyisakan .zip).
+
 Untuk soal poin terakhir ini, akan menggunakan fungsi bernama ``programjam22``, ``archive``, dan ``removee``
 
 Dalam fungsi ``archive`` akan melakukan ``zip`` pada folder folder yang dibutuhkan.
@@ -603,10 +608,408 @@ Ranora adalah mahasiswa Teknik Informatika yang saat ini sedang menjalani magang
 
 a. Ranora harus membuat sebuah program C yang dimana setiap 40 detik membuat sebuah direktori dengan nama sesuai timestamp [YYYY-mm-dd_HH:ii:ss].
 
+Pertama tama adalah menulis ``main`` dari program 
+```c
+int main(int argc, const char *argv[])
+{
+
+        pid_t pid, sid;        // Variabel untuk menyimpan PID
+
+        pid = fork();     // Menyimpan PID dari Child Process
+        /* Keluar saat fork gagal
+        * (nilai variabel pid < 0) */
+        if (pid < 0) {
+            exit(EXIT_FAILURE);
+        }
+
+        /* Keluar saat fork berhasil
+        * (nilai variabel pid adalah PID dari child process) */
+        if (pid > 0) {
+            exit(EXIT_SUCCESS);
+        }
+
+        umask(0);
+
+        sid = setsid();
+        if (sid < 0) {
+            exit(EXIT_FAILURE);
+        }
+
+        if ((chdir("/home/anran/kuliah/sisop/modul2/shift2/soal3")) < 0) {
+            exit(EXIT_FAILURE);
+        }
+
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
+
+    if(!strcmp(argv[1],"-z") || !strcmp(argv[1],"-x"))
+    {
+        int int_sid = (int) sid;
+        generateKiller(argv, int_sid);
+        while (1) {
+            // Tulis program kalian di sini
+            time_t t = time(NULL);
+            struct tm curTime = *localtime(&t);
+            char timeStamp[100];
+            clock_t start = time(NULL), end;
+            //printf("%04d-%02d-%02d_%02d:%02d:%02d\n",curTime.tm_year+1900,curTime.tm_mon+1,curTime.tm_mday,curTime.tm_hour,curTime.tm_min, curTime.tm_sec);
+            strftime(timeStamp,sizeof(timeStamp),"%Y-%m-%d_%H:%M:%S",&curTime);
+            //printf("%s\n",timeStamp);
+            makeDir(timeStamp);
+            end = time(NULL);
+            long int diff = end-start;
+            while(diff != 40)
+            {
+                sleep(1);
+                end = time(NULL);
+                diff = end-start;
+            }
+        }
+    }
+    else _exit(1);
+}
+```
+Pada ``main``, digunakan prompt ``chdir`` karena itu untuk memindah directory dikarenakan script yang diganti. 
+
+Lalu untuk soal (a) sendiri, menggunakan ``time`` sebagai timer untuk mengecek apakah sudah terjalan selama 40 detik. Jika iya, maka akan dijalankan 
+```c
+strftime(timeStamp,sizeof(timeStamp),"%Y-%m-%d_%H:%M:%S",&curTime);
+```
+Dengan ``timeStamp`` sebagai destination, ``curTime`` sebagai pointer untuk memberikan directory dengan nama sesuai format dengan menggunakan library ``tm`` dengan structure ``localtime``. Lalu untuk ``sleep`` digunakan jika ``time`` belum mencapai 40 detik, maka akan sleep terlebih dahulu, jika sudah terpenuhi maka dia akan melanjutkan kembali, berulang ulang.
+
+Setelah itu, hasil dari ``strftime`` akan masuk ke dalam fungsi ``makeDir``
+```c
+void makeDir(char *timeStamp)
+{
+    pid_t child_id;
+    int status;
+
+    child_id = fork();
+
+    if (child_id < 0) {
+        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+    }
+
+    if (child_id == 0) {
+        // this is child
+            pid_t child_id_1;
+            int status_1;
+
+            child_id_1 = fork();
+
+            if (child_id_1 < 0) {
+                exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+            }
+
+            if (child_id_1 == 0) {
+                // this is child
+                    pid_t child_id_2;
+                    int status_2;
+
+                    child_id_2 = fork();
+
+                    if (child_id_2 < 0) {
+                        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+                    }
+
+                    if (child_id_2 == 0) {
+                        // this is child
+                        char *arg0[] = {"mkdir", timeStamp, NULL};
+                        forkExec("/bin/mkdir",arg0);
+                        _exit(1);
+                    } else {
+                        // this is parent
+                        while ((wait(&status_2)) > 0);
+                        downloadPics(timeStamp);
+                        _exit(1);
+                    }
+            } else {
+                // this is parent
+                //while ((wait(&status_1)) > 0);
+
+                _exit(1);
+            }    
+
+    } else {
+        // this is parent
+        while ((wait(&status)) > 0);
+        return;
+    }      
+}
+```
+``fork`` ditulis sebanyak 3 kali karena setiap 40 detik program akan berjalan, yang pertama berjalan adalah ``mkdir`` lalu kemudian menuju ke ``wait`` untuk menuju ke fungsi ``downloadPics``
+
+
 b. Setiap direktori yang sudah dibuat diisi dengan 10 gambar yang didownload dari https://picsum.photos/, dimana setiap gambar akan didownload setiap 5 detik. Setiap gambar yang didownload akan diberi nama dengan format timestamp [YYYY-mm-dd_HH:ii:ss] dan gambar tersebut berbentuk persegi dengan ukuran (n%1000) + 50 pixel dimana n adalah detik Epoch Unix.
+
+Pada soal poin (b), menggunakan fungsi ``downloadPics``
+```c
+void downloadPics(char *timeStamp)
+{
+
+    pid_t child_id;
+
+    child_id = fork();
+
+    if (child_id < 0) {
+        exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+    }
+
+    if (child_id == 0) {
+        // this is child
+            pid_t child_id_1;
+            int status_1;
+
+            child_id_1 = fork();
+
+            if (child_id_1 < 0) {
+                exit(EXIT_FAILURE); // Jika gagal membuat proses baru, program akan berhenti
+            }
+
+            if (child_id_1 == 0) {
+                // this is child
+                for(int i = 0; i<10; i++)
+                {
+                    time_t t = time(NULL);
+                    struct tm curTime = *localtime(&t);
+                    char fileTimeStamp[100];
+                    char loc[100];
+                    strftime(fileTimeStamp,sizeof(fileTimeStamp),"%Y-%m-%d_%H:%M:%S",&curTime);
+                    clock_t start = time(NULL), end;
+                    strcpy(loc,timeStamp);
+                    strcat(loc,"/");
+                    strcat(loc,fileTimeStamp);
+
+                    char source[50] = "https://picsum.photos/";
+                    char size[20];
+                    sprintf(size,"%ld",t%1000+50);
+                    strcat(source,size);
+                    printf("%s\n",source);
+                    char *arg0[] = {"wget","-bq",source, "-O", loc, NULL};
+                    forkExec("/bin/wget",arg0);
+                    end = time(NULL);
+                    long int diff = end-start;
+                    //if(i!=9)
+                    //{
+                        while(diff != 5)
+                        {
+                            sleep(1);
+                            end = time(NULL);
+                            diff = end-start;
+                        }
+                    //}
+                    //else _exit(1);
+                }
+
+            } else {
+                // this is parent
+                while ((wait(&status_1)) > 0);
+                addSuccess(timeStamp);
+                //zip(timeStamp);
+                char *arg[] = {"zip",timeStamp,"-qrm",timeStamp,NULL};
+                forkExec("/bin/zip",arg);
+                _exit(1);
+            }
+    } else {
+        // this is parent
+        return;
+    }
+}
+```
+Yang pertama, adalah loop for sebanyak 10 kali 
+```c
+
+                for(int i = 0; i<10; i++)
+                {
+                    time_t t = time(NULL);
+                    struct tm curTime = *localtime(&t);
+                    char fileTimeStamp[100];
+                    char loc[100];
+                    strftime(fileTimeStamp,sizeof(fileTimeStamp),"%Y-%m-%d_%H:%M:%S",&curTime);
+                    clock_t start = time(NULL), end;
+                    strcpy(loc,timeStamp);
+                    strcat(loc,"/");
+                    strcat(loc,fileTimeStamp);
+
+                    char source[50] = "https://picsum.photos/";
+                    char size[20];
+                    sprintf(size,"%ld",t%1000+50);
+                    strcat(source,size);
+                    printf("%s\n",source);
+                    char *arg0[] = {"wget","-bq",source, "-O", loc, NULL};
+                    forkExec("/bin/wget",arg0);
+                    end = time(NULL);
+                    long int diff = end-start;
+                    //if(i!=9)
+                    //{
+                        while(diff != 5)
+                        {
+                            sleep(1);
+                            end = time(NULL);
+                            diff = end-start;
+                        }
+                    //}
+                    //else _exit(1);
+                }
+```             
+Didalam ``for``, memakai ``strftime`` untuk ke tempat yang sama. Lalu untuk sizenya, menggunakan ``t%1000+50`` karena ``t`` itu sendiri sudah berbentuk Epoch Unix, dan tinggal di masukkan atau ditempel pada source yang sudah dituliskan. Setelah itu, mendownload file menggunakan ``char *arg0[] = {"wget","-bq",source, "-O", loc, NULL};``. Untuk ``time`` sendiri adalah timer yang digunakan jika ``diff`` telah mencapai 5, maka akan mengulang download untuk file selanjutnya, jika tidak, maka akan menjalankan ``sleep``. 
+
 
 c. Setelah direktori telah terisi dengan 10 gambar, program tersebut akan membuat sebuah file “status.txt”, dimana didalamnya berisi pesan “Download Success” yang terenkripsi dengan teknik Caesar Cipher dan dengan shift 5. Caesar Cipher adalah Teknik enkripsi sederhana yang dimana dapat melakukan enkripsi string sesuai dengan shift/key yang kita tentukan. Misal huruf “A” akan dienkripsi dengan shift 4 maka akan menjadi “E”. Karena Ranora orangnya perfeksionis dan rapi, dia ingin setelah file tersebut dibuat, direktori akan di zip dan direktori akan didelete, sehingga menyisakan hanya file zip saja.
 
+Di poin ini, menggunakan sebagian fungsi ``downloadPics`` dan ``addSuccess``.
+```c
+            } else {
+                // this is parent
+                while ((wait(&status_1)) > 0);
+                addSuccess(timeStamp);
+                //zip(timeStamp);
+                char *arg[] = {"zip",timeStamp,"-qrm",timeStamp,NULL};
+                forkExec("/bin/zip",arg);
+                _exit(1);
+            }
+
+```
+Setelah sukses mendownload 10 gambar, maka dia akan menuju fungsi ``addSuccess``
+
+```c
+void addSuccess(char *timeStamp)
+{
+    char msg[20] = "Download Success",ch;
+    int i,key = 5;
+
+    for(i = 0; msg[i] != '\0'; ++i){
+		ch = msg[i];
+		
+		if(ch >= 'a' && ch <= 'z'){
+			ch = ch + key;
+			
+			if(ch > 'z'){
+				ch = ch - 'z' + 'a' - 1;
+			}
+			
+			msg[i] = ch;
+		}
+		else if(ch >= 'A' && ch <= 'Z'){
+			ch = ch + key;
+			
+			if(ch > 'Z'){
+				ch = ch - 'Z' + 'A' - 1;
+			}
+			
+			msg[i] = ch;
+		}
+	}
+
+    char path[100];
+    strcpy(path,timeStamp);
+    strcat(path,"/");
+    strcat(path,"status.txt");
+    
+    FILE *fptr;
+
+    fptr = fopen(path, "w");
+    fputs(msg, fptr);
+    fclose(fptr);
+
+    return;
+}
+```
+Dalam fungsi ``addSuccess`` akan membuat file ``.txt`` untuk menyimpan keterangan "Download Success". Dengan ``key=5`` untuk enskripsi Caesar Cipher.
+```c
+//eskripsi Caesar Cipher
+for(i = 0; msg[i] != '\0'; ++i){
+		ch = msg[i];
+		
+		if(ch >= 'a' && ch <= 'z'){
+			ch = ch + key;
+			
+			if(ch > 'z'){
+				ch = ch - 'z' + 'a' - 1;
+			}
+			
+			msg[i] = ch;
+		}
+		else if(ch >= 'A' && ch <= 'Z'){
+			ch = ch + key;
+			
+			if(ch > 'Z'){
+				ch = ch - 'Z' + 'A' - 1;
+			}
+			
+			msg[i] = ch;
+		}
+	}
+```
+Setelah enkripsi dijalankan, directory "status.txt" akan dibuat. Dan dibuka dengan command ``w`` lalu menaruh Cesar Cipher menggunakan ``fputs(msg, fptr);`` dan ditutup kembali ``fclose(fptr);``.
+
+Setelah sukses menambahkan file "status.txt", maka file itu akan di zip menggunakan
+```c
+char *arg[] = {"zip",timeStamp,"-qrm",timeStamp,NULL};
+                forkExec("/bin/zip",arg);
+```
+Pada fungsi ``downloadPics``.
+
+
 d. Untuk mempermudah pengendalian program, pembimbing magang Ranora ingin program tersebut akan men-generate sebuah program “Killer” yang executable, dimana program tersebut akan menterminasi semua proses program yang sedang berjalan dan akan menghapus dirinya sendiri setelah program dijalankan. Karena Ranora menyukai sesuatu hal yang baru, maka Ranora memiliki ide untuk program “Killer” yang dibuat nantinya harus merupakan program bash.
 
+Poin (d) menggunakan sebagian fungsi di ``main`` sebagai execute nya dan fungsi ``generateKiller`` sendiri. Untuk fungsi di``main`` dibutuhkan untuk mengetahui id dari parent prosesnya agar dapat di-kill serta argumen valuenya.
+```c
+if(!strcmp(argv[1],"-z") || !strcmp(argv[1],"-x"))
+    {
+        int int_sid = (int) sid;
+        generateKiller(argv, int_sid);
+        ...
+        ...
+    }
+```
+Sedang fungsi ``generateKiller``sendiri berjalan dengan menggunakan informasi id parent dan argv yang didapatkan dari fungsi ``main``.
+```c
+void generateKiller(const char *argv[],int sid)
+{
+    FILE *fptr;
+    fptr = fopen("killer.sh","w");
+    fputs("#!/bin/bash\n\n",fptr);
+    char program[100];
+    if(!strcmp(argv[1],"-z"))
+    {
+        sprintf(program,"killall -9 %s\nrm killer.sh",argv[0]);
+        fputs(program,fptr);
+    }
+    else if (!strcmp(argv[1],"-x"))
+    {
+        sprintf(program,"kill -9 %d\nrm killer.sh",sid);
+        fputs(program,fptr);
+    }
+
+    fclose(fptr);
+}
+```
+Pertama adalah membuat file "killer.sh" karena yang diminta adalah berupa **bash**. jika argv dari ``main`` adalah ``-z`` maka akan menjalankan 
+```c
+sprintf(program,"killall -9 %s\nrm killer.sh",argv[0]);
+        fputs(program,fptr);
+ ```
+ Dengan ``%s`` adalah nama program yang didapatkan dari ``argv(0)`` lalu ``/nrm killer.sh`` digunakan untuk meremove file **killer.sh** ketika selesai di jalankan. ``fputs`` digunakan untuk menaruh rangkaian perintah ini di dalam ``fptr``
+ 
+ Sedangkan jika argv yang didapatkan adalah ``-x`` maka akan dijalankan 
+ ```c
+ sprintf(program,"kill -9 %d\nrm killer.sh",sid);
+        fputs(program,fptr);
+ ```
+Dengan ``%d`` berupa id parent prosesnya didapat dari ``sid`` lalu sama seperti sebelumnya, akan diremove ketika selesai dijalankan.
+
+
 e. Pembimbing magang Ranora juga ingin nantinya program utama yang dibuat Ranora dapat dijalankan di dalam dua mode. Untuk mengaktifkan mode pertama, program harus dijalankan dengan argumen -z, dan Ketika dijalankan dalam mode pertama, program utama akan langsung menghentikan semua operasinya Ketika program Killer dijalankan. Sedangkan untuk mengaktifkan mode kedua, program harus dijalankan dengan argumen -x, dan Ketika dijalankan dalam mode kedua, program utama akan berhenti namun membiarkan proses di setiap direktori yang masih berjalan hingga selesai (Direktori yang sudah dibuat akan mendownload gambar sampai selesai dan membuat file txt, lalu zip dan delete direktori).
+
+Poin ini ada dalam fungsi ``main``
+```c
+if(!strcmp(argv[1],"-z") || !strcmp(argv[1],"-x"))
+    {
+        ...
+        ...
+    }
+```
+
+Digunakan dan ditaruh sebelum command yang lain, jadi semua proses pada fungsi lain akan melewati argumen ini terlebih dahulu.
