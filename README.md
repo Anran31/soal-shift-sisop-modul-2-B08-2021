@@ -983,7 +983,7 @@ Pertama adalah membuat file "killer.sh" karena yang diminta adalah berupa **bash
 sprintf(program,"killall -9 %s\nrm killer.sh",argv[0]);
         fputs(program,fptr);
  ```
- Dengan ``%s`` adalah nama program yang didapatkan dari ``argv(0)`` lalu ``/nrm killer.sh`` digunakan untuk meremove file **killer.sh** ketika selesai di jalankan. ``fputs`` digunakan untuk menaruh rangkaian perintah ini di dalam ``fptr``
+ Dengan ``%s`` adalah nama program yang didapatkan dari ``argv(0)`` lalu ``rm killer.sh`` digunakan untuk meremove file **killer.sh** ketika selesai di jalankan. ``fputs`` digunakan untuk menaruh rangkaian perintah ini di dalam ``fptr``
  
  Sedangkan jika argv yang didapatkan adalah ``-x`` maka akan dijalankan 
  ```c
